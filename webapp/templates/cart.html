@@ -1,0 +1,52 @@
+{% extends 'layout/base.html' %}
+{% block title %}Giỏ hàng{% endblock %}
+{% block body %}
+    <h1 class="text-center text-primary" style="margin-top: 100px">Giỏ hàng</h1>
+    {% if 'cart' in session and session['cart'] %}
+    <div class="container card" style="margin-top:20px; margin-bottom: 20px">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">STT</th>
+                    <th scope="col">Tên sản phẩm</th>
+                    <th scope="col">Số lượng</th>
+                    <th scope="col">Đơn giá</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in session['cart'].values() %}
+                <tr id="sach{{ c.id }}">
+                    <th scope="row">{{ c.id }}</th>
+                    <td>{{ c.name }}</td>
+                    <td>
+                        <div class="form-group">
+                            <input class="form-control"
+                                   type="number"
+                                   onblur="updateCart({{ c.id }}, this)"
+                                   min="1"
+                                   value="{{ c.quantity }}"/>
+                        </div>
+                    </td>
+                    <td>{{ "{:,.1f}".format(c.price) }} VND</td>
+                    <td>
+                        <input type="button" class="btn btn-primary" value="Xóa" onclick="deleteCart({{ c.id }})">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="alert alert-primary">
+            <h5>Tổng sản phẩm: <span class="cart-counter">{{ stats.total_quantity }}</span></h5>
+            <h5>Tổng tiền: <span id="total-amount">{{ "{:,.1f}".format(stats.total_amount) }}</span> VND </h5>
+        </div>
+        <input type="button" value="Đặt hàng" onclick="order()" class="btn btn-secondary" style="margin-top: 10px"/>
+        <input type="button" value="Thanh toán" onclick="pay()" class="btn btn-secondary" style="margin-top: 20px"/>
+        <br>
+        {% else %}
+            <div class="container">
+                <h5 class="text-center text-secondary alert alert-primary" style="margin-top: 20px"><i>Không có sản phẩm nào!</i></h5>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

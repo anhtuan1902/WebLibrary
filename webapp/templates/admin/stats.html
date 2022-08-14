@@ -1,0 +1,74 @@
+{% extends 'admin/base.html' %}
+
+{% block body %}
+<h1 CLASS="text-center">THỐNG KÊ DOANH THU</h1>
+<div class="row">
+    <div class="col-md-5 col-xs-12">
+        <table class="table">
+            <tr>
+                <th>Mã Sản Phẩm</th>
+                <th>Tên Sản Phẩm</th>
+                <th>Doanh Thu</th>
+            </tr>
+            {% for s in stats %}
+            <tr>
+                <td>{{ s[0] }}</td>
+                <td>{{ s[1] }}</td>
+                <td>
+                    {% if s[2] %}
+                        {{ s[2] }} VND
+                    {% else %}
+                        0 VND
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="col-md-7 col-xs-12">
+        <canvas id="mySChart"></canvas>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    let labels = [], info = []
+      let colors = []
+      let borderColors = []
+      let r, g, b
+      {% for s in stats %}
+        {% if s[2] %}
+        labels.push('{{s[1]}}')
+        info.push({{s[2]}})
+
+        r = Math.random()*255
+        g = Math.random()*255
+        b = Math.random()*255
+        colors.push(`rgba(${r}, ${g}, ${b}, 0.2)`)
+        borderColors.push(`rgba(${r}, ${g}, ${b}, 1)`)
+        {% endif %}
+      {% endfor %}
+      window.onload = function(){
+          const ctx = document.getElementById('mySChart').getContext('2d');
+          const myTLChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+                  labels: labels,
+                  datasets: [{
+                      label: 'Thống kê doanh thu',
+                      data: info,
+                      backgroundColor: colors,
+                      borderColor: borderColors,
+                      borderWidth: 1
+                  }]
+              },
+              options: {
+                  scales: {
+                      y: {
+                          beginAtZero: true
+                      }
+                  }
+              }
+          });
+      }
+</script>
+{% endblock %}

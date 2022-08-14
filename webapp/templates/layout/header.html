@@ -1,0 +1,55 @@
+<header class="p-3 mb-3 border-bottom bg-dark fixed-top">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+          <img src="{{ url_for('static', filename='images/navbar.jpg') }}" alt="" width="50" height="50" class="rounded-circle">
+        </a>
+
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+          <li><a class="nav-item nav-link link-secondary" href="/">Trang chủ</a></li>
+          {% for tl in theloai %}
+          <li><a href="{{ url_for('home', theloai_id=tl.id) }}" class="nav-link nav-item px-2 link-secondary">{{ tl.tentheloai }}</a></li>
+          {% endfor %}
+          {% if current_user.is_authenticated %}
+          <li style="margin-left:30px">
+            <a href="{{ url_for('cart') }}" class="nav-link px-2 link-secondary">
+              <i class="fas fa-cart-plus " style="font-size:25px"></i>
+              <span class="badge cart-counter" style="background-color:#0d6efd !important">{{ cart_stats.total_quantity }}</span>
+            </a>
+          </li>
+          {% else %}
+          <li style="margin-left:30px">
+            <a href="{{ url_for('login_kh', next='cart') }}" class="nav-link px-2 link-secondary">
+              <i class="fas fa-cart-plus " style="font-size:25px"></i>
+              <span class="badge" style="background-color:#0d6efd !important">{{ cart_stats.total_quantity }}</span>
+            </a>
+          </li>
+          {% endif %}
+        </ul>
+
+        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3">
+          <input type="search" name="keyword" class="form-control" placeholder="Nhập tên sản phẩm" aria-label="Search">
+        </form>
+          
+        <div class="dropdown text-end">
+          {% if current_user.is_authenticated %}
+          <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            {% if current_user.hinhanh %}
+                <img src="{{current_user.hinhanh}}"
+                     alt="demo" width="40" class="img-fluid rounded-circle">
+            {% else %}
+                <img src="{{ url_for('static', filename='images/avatardefault.png') }}" class="rounded-circle" width="40" alt="{{ current_user.ten }}">
+            {% endif %}
+          </a>
+          <ul class="dropdown-menu text-small text-center" aria-labelledby="dropdownUser1" style="">
+            <li><p>{{ current_user.ten }}</p></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{{ url_for('kh_logout') }}">Đăng xuất</a></li>
+          </ul>
+          {% else %}
+          <a class="nav-item nav-link text-dange" href="{{ url_for('login_kh') }}">Đăng nhập</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </header>

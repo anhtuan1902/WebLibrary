@@ -1,0 +1,89 @@
+{% extends 'layout/base.html' %}
+{% block title %}Chi tiết sản phẩm{% endblock %}
+{% block body %}
+<div class="card container mb-3" style="margin-top: 110px">
+  <div class="row">
+    <div class="col-md-5 col-xs-12">
+      <div class="card-body">
+        <img src="static/images/{{ sach.hinhanh }}" height="350" class="card-img-top" alt="{{ sach.tensach }}">
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="card-body text-align">
+        <h5 class="card-title">{{ sach.tensach }}</h5>
+        <p class="card-text">Tác giả: {{ sach.tacgia }}</p>
+        <p class="card-text">Giá bán: {{ sach.giaban }} VND</p>
+        <p class="card-text">Số lượng: {{ sach.soluong }} quyển</p>
+        {% if sach.soluong > 0 %}
+          <a href="#" class="btn btn-primary" onclick="addCart({{ sach.id }}, '{{ sach.tensach }}', {{ sach.giaban }})">Thêm vào giỏ</a>
+        {% else %}
+          <p>Hết hàng</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card container" style="margin-bottom:20px">
+  <ul class="nav nav-tabs" style="margin-top: 5px" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Chi tiết sản phẩm</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Mô tả sản phẩm</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Bình luận</button>
+    </li>
+  </ul>
+  <div class="tab-content" style="margin-top:20px" id="myTabContent">
+    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+      <p>Mã sản phẩm: {{ sach.id }}</p>
+      <p>Tác giả: {{ sach.tacgia }}</p>
+      <p>Ngôn ngữ: Tiếng việt</p>
+      {% for tl in tl %}
+      {% if tl.id == sach.idtheloai%}
+        <p>Thể loại: {{ tl.tentheloai }}</p>
+      {% endif %}
+      {% endfor %}
+      <p>Ngày nhập: {{ sach.ngaytao }}</p>
+    </div>
+    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+      <p>{{sach.mota}}</p>
+    </div>
+    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+      {% if current_user.is_authenticated %}
+      <div>
+        <div class="form-group">
+          <textarea class="form-control" id="commentId"
+                    placeholder="Nhập nội dung bình luận........"></textarea>
+        </div>
+        <input type="button" style="margin: 10px 0 10px 0"
+               class="btn btn-primary"
+               value="Bình luận"
+               onclick="addComment({{ sach.id }})"
+        />
+      </div>
+      {% else %}
+      <p class="text-secondary">Phải đăng nhập trước <a href="{{ url_for('login_kh', next='detail', sach_id=sach.id) }}">ở đây</a></p>
+      {% endif %}
+      <hr>
+      {% if pages > 1%}
+      <ul class="pagination">
+        {% for idx in range(1, pages+1) %}
+        <li class="page-item"><a class="page-link" href="javascrit:;" onclick="getComments({{ sach.id }}, {{ idx }})">{{ idx }}</a></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <div id="commentArea">
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  window.onload = function(){
+    getComments({{ sach.id }})
+  }
+</script>
+{% endblock %}
